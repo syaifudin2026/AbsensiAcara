@@ -17,16 +17,16 @@
             theme: {
                 extend: {
                     colors: {
-                        madrasah: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' }
+                        madrasah: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 500: '#10b981', 600: '#059669', 700: '#047857' }
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        /* Custom scrollbar untuk tabel horizontal di HP */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #059669; }
         
@@ -35,42 +35,47 @@
             border: 4px solid #f3f3f3;
             border-top: 4px solid #10b981;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Perbesar tap area radio button untuk mobile */
+        input[type="radio"] {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed top-5 right-5 transform translate-x-full transition-transform duration-300 z-50 rounded shadow-lg flex items-center px-4 py-3 text-white font-medium">
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 md:translate-x-0 md:left-auto md:right-5 translate-y-[-150%] md:translate-y-0 md:translate-x-full transition-all duration-300 z-50 rounded shadow-lg flex items-center px-4 py-3 text-white font-medium w-11/12 md:w-auto max-w-sm">
         <i id="toast-icon" class="fas mr-2"></i>
         <span id="toast-msg">Pesan</span>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loading" class="fixed inset-0 bg-white/80 z-40 hidden flex-col items-center justify-center">
-        <div class="loader mb-3"></div>
-        <p class="text-madrasah-600 font-semibold" id="loading-text">Memuat data...</p>
+    <div id="loading" class="fixed inset-0 bg-white/90 z-40 hidden flex-col items-center justify-center backdrop-blur-sm">
+        <div class="loader mb-4"></div>
+        <p class="text-madrasah-600 font-semibold tracking-wide animate-pulse" id="loading-text">Memuat data...</p>
     </div>
 
     <!-- NAVBAR -->
-    <nav id="navbar" class="bg-madrasah-600 text-white shadow-md hidden">
+    <nav id="navbar" class="bg-madrasah-600 text-white shadow-md hidden sticky top-0 z-30">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2 text-xl font-bold">
+            <div class="flex items-center gap-2 text-lg md:text-xl font-bold">
                 <i class="fas fa-mosque"></i>
-                <span>Absensi Madrasah</span>
+                <span class="truncate">Absensi Madrasah</span>
             </div>
-            <button onclick="logout()" class="hover:bg-madrasah-700 px-3 py-1 rounded transition">
-                <i class="fas fa-sign-out-alt mr-1"></i> Keluar
+            <button onclick="logout()" class="hover:bg-madrasah-700 bg-madrasah-700/50 px-3 py-1.5 rounded-lg transition text-sm md:text-base flex items-center">
+                <i class="fas fa-sign-out-alt md:mr-1"></i> <span class="hidden md:inline">Keluar</span>
             </button>
         </div>
     </nav>
 
     <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow container mx-auto px-4 py-6" id="app-content">
+    <main class="flex-grow container mx-auto px-4 py-6 w-full max-w-7xl pb-20" id="app-content">
         <!-- Views will be injected here by JavaScript -->
     </main>
 
@@ -78,21 +83,26 @@
 
     <!-- 1. LOGIN VIEW -->
     <template id="tpl-login">
-        <div class="max-w-md mx-auto mt-10 bg-white rounded-xl shadow-md overflow-hidden p-8 border-t-4 border-madrasah-500">
-            <div class="text-center mb-6">
-                <div class="bg-madrasah-50 text-madrasah-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fas fa-shield-alt text-3xl"></i>
+        <div class="max-w-md mx-auto mt-10 md:mt-20 bg-white rounded-2xl shadow-xl overflow-hidden p-8 md:p-10 border-t-4 border-madrasah-500 mx-4 md:mx-auto">
+            <div class="text-center mb-8">
+                <div class="bg-madrasah-50 text-madrasah-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                    <i class="fas fa-shield-alt text-4xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">Login Admin</h2>
-                <p class="text-sm text-gray-500 mt-1">Sistem Rekap Kehadiran Kegiatan</p>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Login Admin</h2>
+                <p class="text-sm text-gray-500 mt-2">Sistem Rekap Kehadiran Kegiatan</p>
             </div>
             <form onsubmit="handleLogin(event)">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-madrasah-500" id="password" type="password" placeholder="Masukkan password admin" required>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password Akses</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 pl-10 pr-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-madrasah-500 focus:border-transparent transition-all" id="password" type="password" placeholder="Masukkan password admin" required>
+                    </div>
                 </div>
-                <button class="w-full bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition" type="submit">
-                    Masuk
+                <button class="w-full bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-all transform active:scale-95 shadow-md flex justify-center items-center gap-2" type="submit">
+                    Masuk ke Sistem <i class="fas fa-arrow-right"></i>
                 </button>
             </form>
         </div>
@@ -100,42 +110,42 @@
 
     <!-- 2. DASHBOARD VIEW -->
     <template id="tpl-dashboard">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-madrasah-500 pl-3">Daftar Kegiatan</h2>
-            <button onclick="navigate('createEvent')" class="bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2 px-4 rounded shadow transition flex items-center">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h2 class="text-xl md:text-2xl font-bold text-gray-800 border-l-4 border-madrasah-500 pl-3">Daftar Kegiatan</h2>
+            <button onclick="navigate('createEvent')" class="w-full md:w-auto bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-md transition-all flex items-center justify-center transform active:scale-95">
                 <i class="fas fa-plus mr-2"></i> Buat Kegiatan
             </button>
         </div>
-        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="events-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <!-- Event cards will be populated here -->
         </div>
     </template>
 
     <!-- 3. CREATE EVENT VIEW -->
     <template id="tpl-create-event">
-        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6 border-t-4 border-madrasah-500">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-calendar-plus mr-2 text-madrasah-600"></i>Buat Kegiatan Baru</h2>
-                <button onclick="navigate('dashboard')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8 border-t-4 border-madrasah-500">
+            <div class="flex items-center justify-between mb-6 border-b pb-4">
+                <h2 class="text-lg md:text-xl font-bold text-gray-800"><i class="fas fa-calendar-plus mr-2 text-madrasah-600"></i>Buat Kegiatan Baru</h2>
+                <button onclick="navigate('dashboard')" class="text-gray-400 hover:text-red-500 transition-colors p-2"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form onsubmit="handleCreateEvent(event)">
-                <div class="mb-4">
+                <div class="mb-5">
                     <label class="block text-gray-700 text-sm font-bold mb-2">Nama Kegiatan</label>
-                    <input id="ev-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500" type="text" placeholder="Contoh: MPLS 2026" required>
+                    <input id="ev-name" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2.5 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500 focus:border-transparent transition-all" type="text" placeholder="Contoh: MPLS 2026" required>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">Tanggal Mulai</label>
-                        <input id="ev-start" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500" type="date" required>
+                        <input id="ev-start" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2.5 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500 focus:border-transparent transition-all" type="date" required>
                     </div>
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">Tanggal Selesai</label>
-                        <input id="ev-end" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500" type="date" required>
+                        <input id="ev-end" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-2.5 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-madrasah-500 focus:border-transparent transition-all" type="date" required>
                     </div>
                 </div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="navigate('dashboard')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition">Batal</button>
-                    <button type="submit" class="bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2 px-4 rounded shadow transition">Simpan Kegiatan</button>
+                <div class="flex flex-col-reverse md:flex-row justify-end gap-3">
+                    <button type="button" onclick="navigate('dashboard')" class="w-full md:w-auto bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 px-6 rounded-lg transition-colors">Batal</button>
+                    <button type="submit" class="w-full md:w-auto bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-md transition-transform transform active:scale-95">Simpan Kegiatan</button>
                 </div>
             </form>
         </div>
@@ -143,48 +153,69 @@
 
     <!-- 4. ATTENDANCE VIEW -->
     <template id="tpl-attendance">
-        <div class="mb-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <button onclick="navigate('dashboard')" class="text-madrasah-600 hover:text-madrasah-800 text-sm font-semibold mb-2 inline-block"><i class="fas fa-arrow-left mr-1"></i> Kembali</button>
-                <h2 id="att-event-name" class="text-2xl font-bold text-gray-800">Nama Acara</h2>
-                <p id="att-event-dates" class="text-sm text-gray-600"><i class="far fa-calendar-alt mr-1"></i> - </p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="generatePDF()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow transition flex items-center">
-                    <i class="fas fa-file-pdf mr-2"></i> Rekap PDF
+        <!-- Header Section -->
+        <div class="mb-5 bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
+                <div>
+                    <button onclick="navigate('dashboard')" class="text-gray-500 hover:text-madrasah-600 text-sm font-semibold mb-2 inline-flex items-center transition-colors">
+                        <i class="fas fa-arrow-left mr-1"></i> Kembali
+                    </button>
+                    <h2 id="att-event-name" class="text-xl md:text-2xl font-bold text-gray-800 leading-tight">Nama Acara</h2>
+                    <p id="att-event-dates" class="text-sm text-gray-500 mt-1"><i class="far fa-calendar-alt mr-1"></i> - </p>
+                </div>
+                <button onclick="generatePDF()" class="w-full md:w-auto bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 font-semibold py-2 px-4 rounded-lg transition-all flex items-center justify-center shadow-sm">
+                    <i class="fas fa-file-pdf mr-2"></i> Unduh Rekap PDF
                 </button>
             </div>
-        </div>
+            
+            <hr class="border-gray-100 my-4">
 
-        <div class="bg-white rounded-xl shadow-md p-4 mb-6 border-l-4 border-blue-500 flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-3">
-                <label class="font-bold text-gray-700 whitespace-nowrap">Pilih Tanggal Absen:</label>
-                <input type="date" id="att-date-picker" onchange="loadAttendanceData()" class="border rounded py-1 px-2 focus:ring-2 focus:ring-madrasah-500 outline-none">
+            <!-- Date Picker Control -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex flex-col w-full sm:w-auto">
+                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tanggal Absensi</label>
+                    <div class="relative">
+                        <input type="date" id="att-date-picker" onchange="loadAttendanceData()" class="w-full sm:w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-madrasah-500 focus:border-madrasah-500 block pl-3 pr-10 py-2">
+                    </div>
+                </div>
+                <div class="text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-100 flex items-center w-full sm:w-auto">
+                    <i class="fas fa-info-circle mr-2 text-lg"></i>
+                    Pastikan memilih tanggal yang sesuai dengan rentang kegiatan.
+                </div>
             </div>
-            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full"><i class="fas fa-info-circle mr-1"></i>Pilih tanggal dalam rentang kegiatan</span>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+        <!-- Tombol Tandai Semua Hadir -->
+        <div class="flex justify-end mb-3">
+            <button onclick="markAllPresent()" class="w-full sm:w-auto bg-madrasah-50 text-madrasah-700 hover:bg-madrasah-100 font-semibold py-2 px-4 rounded-lg text-sm transition-all flex items-center justify-center border border-madrasah-200 shadow-sm active:scale-95">
+                <i class="fas fa-check-double mr-2"></i> Tandai Semua Hadir Penuh
+            </button>
+        </div>
+
+        <!-- Table Card -->
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200">
+            <div class="overflow-x-auto pb-2">
+                <table class="w-full text-left border-collapse min-w-[600px]">
                     <thead>
-                        <tr class="bg-madrasah-50 text-madrasah-700 text-sm uppercase">
-                            <th class="py-3 px-4 border-b font-semibold w-12">No</th>
-                            <th class="py-3 px-4 border-b font-semibold min-w-[200px]">Nama Guru</th>
-                            <th class="py-3 px-4 border-b font-semibold text-center">Hadir Penuh</th>
-                            <th class="py-3 px-4 border-b font-semibold text-center">Hadir Sebagian</th>
-                            <th class="py-3 px-4 border-b font-semibold text-center">Izin</th>
-                            <th class="py-3 px-4 border-b font-semibold text-center">Alpha</th>
+                        <tr class="bg-gray-50 text-gray-600 text-xs md:text-sm uppercase tracking-wide border-b border-gray-200">
+                            <th class="py-4 px-4 font-bold w-12 text-center">No</th>
+                            <th class="py-4 px-4 font-bold min-w-[180px]">Nama Guru</th>
+                            <th class="py-4 px-2 font-bold text-center text-green-700">Hadir Penuh</th>
+                            <th class="py-4 px-2 font-bold text-center text-yellow-600">Hadir Sbg.</th>
+                            <th class="py-4 px-2 font-bold text-center text-blue-600">Izin</th>
+                            <th class="py-4 px-2 font-bold text-center text-red-600">Alpha</th>
                         </tr>
                     </thead>
-                    <tbody id="att-table-body" class="text-sm">
+                    <tbody id="att-table-body" class="text-sm divide-y divide-gray-100">
                         <!-- Rows injected here -->
                     </tbody>
                 </table>
             </div>
-            <div class="p-4 bg-gray-50 border-t flex justify-end">
-                <button onclick="saveAttendance()" class="bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-2 px-6 rounded shadow transition flex items-center">
-                    <i class="fas fa-save mr-2"></i> Simpan Kehadiran
+            
+            <!-- Sticky Footer for Save Button on Mobile -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200 flex justify-end sticky bottom-0 z-10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                <button onclick="saveAttendance()" class="w-full sm:w-auto bg-madrasah-600 hover:bg-madrasah-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg sm:text-base">
+                    <i class="fas fa-save"></i> Simpan Kehadiran
                 </button>
             </div>
         </div>
@@ -196,7 +227,23 @@
         // ==========================================
         // GANTI URL DI BAWAH INI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA!
         const GAS_URL = "https://script.google.com/macros/s/AKfycbwaH1_xCndRlhKu-Pw7HxvHolCnp9a_87e6kB-LvPMQIFcFDyEoZrPjoJjcqeEAbL8V/exec"; 
-        const ADMIN_PASSWORD = "admin"; // Ganti dengan password yang diinginkan
+        const ADMIN_PASSWORD = "dea123"; // Ganti dengan password yang diinginkan
+
+        // --- DATA MOCK UNTUK PREVIEW ---
+        // Digunakan jika GAS_URL masih berupa placeholder / URL Dummy
+        const isDummyURL = GAS_URL.includes("XXXXXXXXXXXXXXXXXXXXX");
+        let mockDB = {
+            events: [
+                { id: 'EVT_1', name: 'MPLS 2026', startDate: '2026-07-10', endDate: '2026-07-15' }
+            ],
+            teachers: [
+                { id: '1', name: 'Budi Santoso' },
+                { id: '2', name: 'Siti Aminah' },
+                { id: '3', name: 'Ahmad Dahlan' },
+                { id: '4', name: 'Rina Kusuma' }
+            ],
+            attendance: []
+        };
 
         // State Aplikasi
         let state = {
@@ -228,22 +275,29 @@
             const msg = document.getElementById('toast-msg');
             
             msg.innerText = message;
-            toast.className = 'fixed top-5 right-5 transform transition-transform duration-300 z-50 rounded shadow-lg flex items-center px-4 py-3 text-white font-medium';
+            
+            // Handle mobile/desktop positioning via translate
+            let baseClasses = 'fixed z-50 rounded shadow-lg flex items-center px-4 py-3 text-white font-medium w-11/12 md:w-auto max-w-sm transition-all duration-300 top-5 left-1/2 md:left-auto md:right-5';
             
             if (type === 'success') {
-                toast.classList.add('bg-green-500', 'translate-x-0');
-                icon.className = 'fas fa-check-circle mr-2';
+                toast.className = baseClasses + ' bg-green-500';
+                icon.className = 'fas fa-check-circle text-lg';
             } else if (type === 'error') {
-                toast.classList.add('bg-red-500', 'translate-x-0');
-                icon.className = 'fas fa-exclamation-circle mr-2';
+                toast.className = baseClasses + ' bg-red-500';
+                icon.className = 'fas fa-exclamation-circle text-lg';
             } else {
-                toast.classList.add('bg-blue-500', 'translate-x-0');
-                icon.className = 'fas fa-info-circle mr-2';
+                toast.className = baseClasses + ' bg-blue-500';
+                icon.className = 'fas fa-info-circle text-lg';
             }
 
+            // Animate In (center on mobile, right on desktop)
             setTimeout(() => {
-                toast.classList.remove('translate-x-0');
-                toast.classList.add('translate-x-full');
+                toast.style.transform = window.innerWidth < 768 ? 'translate(-50%, 0)' : 'translate(0, 0)';
+            }, 10);
+
+            // Animate Out
+            setTimeout(() => {
+                toast.style.transform = window.innerWidth < 768 ? 'translate(-50%, -150%)' : 'translate(150%, 0)';
             }, 3000);
         }
 
@@ -254,9 +308,26 @@
         }
 
         // ==========================================
-        // FUNGSI API (Komunikasi dengan GAS)
+        // FUNGSI API (Komunikasi dengan GAS / Mock)
         // ==========================================
         async function fetchFromGAS(action, params = {}) {
+            // Gunakan Mock Data jika URL masih berupa placeholder
+            if (isDummyURL) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        if (action === 'getEvents') resolve(mockDB.events);
+                        else if (action === 'getTeachers') resolve(mockDB.teachers);
+                        else if (action === 'getAttendance') {
+                            resolve(mockDB.attendance.filter(a => a.eventId === params.eventId && a.date === params.date));
+                        }
+                        else if (action === 'getAllAttendanceForEvent') {
+                            resolve(mockDB.attendance.filter(a => a.eventId === params.eventId));
+                        }
+                        else resolve([]);
+                    }, 500); // Simulasi delay jaringan
+                });
+            }
+
             let url = new URL(GAS_URL);
             url.searchParams.append('action', action);
             for (let key in params) {
@@ -275,8 +346,35 @@
         }
 
         async function postToGAS(action, data) {
+            // Gunakan Mock Data jika URL masih berupa placeholder
+            if (isDummyURL) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        if (action === 'createEvent') {
+                            const newId = 'EVT_' + Date.now();
+                            mockDB.events.push({ id: newId, name: data.name, startDate: data.startDate, endDate: data.endDate });
+                            resolve({ id: newId });
+                        }
+                        else if (action === 'saveAttendance') {
+                            // Hapus data lama (update logic)
+                            mockDB.attendance = mockDB.attendance.filter(a => !(a.eventId === data.eventId && a.date === data.date));
+                            // Insert data baru
+                            data.attendanceList.forEach(item => {
+                                mockDB.attendance.push({
+                                    eventId: data.eventId,
+                                    date: data.date,
+                                    teacherId: item.teacherId,
+                                    teacherName: item.teacherName,
+                                    status: item.status
+                                });
+                            });
+                            resolve("Saved");
+                        }
+                    }, 500); // Simulasi delay jaringan
+                });
+            }
+
             try {
-                // Menggunakan form data x-www-form-urlencoded untuk GAS doPost
                 const formData = new URLSearchParams();
                 formData.append('action', action);
                 formData.append('data', JSON.stringify(data));
@@ -318,6 +416,7 @@
                 tpl = document.getElementById('tpl-dashboard').innerHTML;
                 content.innerHTML = tpl;
                 renderEventsList();
+                window.scrollTo(0, 0);
                 return;
             }
             if (view === 'createEvent') tpl = document.getElementById('tpl-create-event').innerHTML;
@@ -325,10 +424,12 @@
                 tpl = document.getElementById('tpl-attendance').innerHTML;
                 content.innerHTML = tpl;
                 setupAttendanceView();
+                window.scrollTo(0, 0);
                 return;
             }
 
             content.innerHTML = tpl;
+            window.scrollTo(0, 0);
         }
 
         // ==========================================
@@ -354,13 +455,16 @@
         async function loadInitialData() {
             showLoading("Memuat data sistem...");
             try {
-                // Load events and teachers parallel
                 const [events, teachers] = await Promise.all([
                     fetchFromGAS('getEvents'),
                     fetchFromGAS('getTeachers')
                 ]);
                 state.events = events;
                 state.teachers = teachers;
+                
+                if(isDummyURL) {
+                    setTimeout(() => showToast("Mode Preview: Menggunakan Data Simulasi", "info"), 500);
+                }
             } catch (error) {
                 showToast("Gagal memuat data. Periksa koneksi atau URL Script.", "error");
             } finally {
@@ -371,9 +475,12 @@
         function renderEventsList() {
             const grid = document.getElementById('events-grid');
             if (state.events.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500 bg-white rounded-lg border border-dashed border-gray-300">
-                    <i class="fas fa-folder-open text-4xl mb-3 text-gray-300 block"></i>
-                    Belum ada kegiatan. Silakan buat baru.
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500 bg-white rounded-2xl border border-dashed border-gray-300">
+                    <div class="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-folder-open text-2xl text-gray-400 block"></i>
+                    </div>
+                    <p class="font-medium text-gray-600">Belum ada kegiatan.</p>
+                    <p class="text-sm mt-1">Silakan klik "Buat Kegiatan" untuk memulai.</p>
                 </div>`;
                 return;
             }
@@ -383,26 +490,28 @@
                 const eDate = new Date(ev.endDate);
                 const now = new Date();
                 
-                // Simple status logic
                 let statusBadge = '';
-                if(now < sDate) statusBadge = '<span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-blue-400">Akan Datang</span>';
-                else if (now >= sDate && now <= eDate) statusBadge = '<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-400">Berlangsung</span>';
-                else statusBadge = '<span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-gray-400">Selesai</span>';
+                if(now < sDate) statusBadge = '<span class="bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-md border border-blue-200">Akan Datang</span>';
+                else if (now >= sDate && now <= eDate) statusBadge = '<span class="bg-green-50 text-green-700 text-xs font-bold px-2.5 py-1 rounded-md border border-green-200">Berlangsung</span>';
+                else statusBadge = '<span class="bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-md border border-gray-300">Selesai</span>';
 
                 return `
-                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition border border-gray-100 flex flex-col">
-                    <div class="p-5 flex-grow">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-gray-800">${ev.name}</h3>
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col group cursor-pointer overflow-hidden" onclick="openAttendance('${ev.id}')">
+                    <div class="p-6 flex-grow">
+                        <div class="flex justify-between items-start mb-4 gap-2">
+                            <h3 class="text-lg font-bold text-gray-800 leading-tight group-hover:text-madrasah-600 transition-colors">${ev.name}</h3>
                             ${statusBadge}
                         </div>
-                        <p class="text-sm text-gray-600 mb-1"><i class="fas fa-calendar-play mr-2 text-madrasah-500"></i> ${formatDate(ev.startDate)}</p>
-                        <p class="text-sm text-gray-600"><i class="fas fa-calendar-check mr-2 text-red-400"></i> ${formatDate(ev.endDate)}</p>
+                        <div class="space-y-2">
+                            <p class="text-sm text-gray-600 flex items-center"><i class="fas fa-play-circle w-5 text-madrasah-500"></i> ${formatDate(ev.startDate)}</p>
+                            <p class="text-sm text-gray-600 flex items-center"><i class="fas fa-stop-circle w-5 text-red-400"></i> ${formatDate(ev.endDate)}</p>
+                        </div>
                     </div>
-                    <div class="bg-gray-50 p-4 border-t border-gray-100 flex justify-end">
-                        <button onclick="openAttendance('${ev.id}')" class="text-madrasah-600 hover:text-madrasah-800 font-semibold text-sm flex items-center">
-                            Kelola Absensi <i class="fas fa-arrow-right ml-1"></i>
-                        </button>
+                    <div class="bg-gray-50/50 p-4 border-t border-gray-100 flex justify-between items-center group-hover:bg-madrasah-50 transition-colors">
+                        <span class="text-xs font-semibold text-gray-500 group-hover:text-madrasah-600">Ketuk untuk kelola</span>
+                        <div class="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center text-madrasah-500 group-hover:bg-madrasah-500 group-hover:text-white transition-all">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
                     </div>
                 </div>
                 `;
@@ -425,7 +534,7 @@
                 const newEvent = { name, startDate: start, endDate: end };
                 const res = await postToGAS('createEvent', newEvent);
                 newEvent.id = res.id;
-                state.events.push(newEvent); // Update local state
+                state.events.push(newEvent); 
                 showToast("Kegiatan berhasil dibuat!");
                 navigate('dashboard');
             } catch (error) {
@@ -442,9 +551,8 @@
             state.currentEvent = state.events.find(e => e.id === eventId);
             if (!state.currentEvent) return;
             
-            // Set default date to today, or start date if today is before start date
             const todayStr = new Date().toISOString().split('T')[0];
-            const startStr = state.currentEvent.startDate.split('T')[0]; // Handle if timestamp
+            const startStr = state.currentEvent.startDate.split('T')[0]; 
             
             if (todayStr < startStr) state.selectedDate = startStr;
             else state.selectedDate = todayStr;
@@ -458,7 +566,6 @@
             document.getElementById('att-event-dates').innerHTML = `<i class="far fa-calendar-alt mr-1"></i> ${formatDate(ev.startDate)} s/d ${formatDate(ev.endDate)}`;
             
             const dp = document.getElementById('att-date-picker');
-            // Format for input type="date" must be YYYY-MM-DD
             dp.min = new Date(ev.startDate).toISOString().split('T')[0];
             dp.max = new Date(ev.endDate).toISOString().split('T')[0];
             dp.value = state.selectedDate;
@@ -472,7 +579,6 @@
 
             showLoading("Memuat data absensi...");
             try {
-                // Fetch saved attendance for this date
                 const attData = await fetchFromGAS('getAttendance', {
                     eventId: state.currentEvent.id,
                     date: state.selectedDate
@@ -490,35 +596,58 @@
             const tbody = document.getElementById('att-table-body');
             
             if (state.teachers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">Data guru kosong. Silakan isi Sheet 'Teachers' terlebih dahulu.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-red-500 bg-red-50">Data guru kosong. Silakan isi Sheet 'Teachers' pada Google Sheets terlebih dahulu.</td></tr>`;
                 return;
             }
 
             let html = '';
             state.teachers.forEach((teacher, index) => {
-                // Check if already has status
                 const existing = state.currentAttendance.find(a => a.teacherId == teacher.id);
-                const status = existing ? existing.status : 'Alpha'; // Default Alpha
+                const status = existing ? existing.status : 'Alpha'; 
 
+                // Perbesar radio buttons (w-6 h-6) dan beri padding yang cukup untuk di-tap
                 html += `
-                <tr class="border-b hover:bg-gray-50 teacher-row" data-id="${teacher.id}" data-name="${teacher.name}">
-                    <td class="py-3 px-4">${index + 1}</td>
-                    <td class="py-3 px-4 font-medium">${teacher.name}</td>
-                    <td class="py-3 px-4 text-center">
-                        <input type="radio" name="status_${teacher.id}" value="Hadir Penuh" class="w-5 h-5 text-green-600 focus:ring-green-500" ${status === 'Hadir Penuh' ? 'checked' : ''}>
+                <tr class="hover:bg-green-50/50 teacher-row transition-colors" data-id="${teacher.id}" data-name="${teacher.name}">
+                    <td class="py-4 px-4 text-center font-medium text-gray-500">${index + 1}</td>
+                    <td class="py-4 px-4 font-semibold text-gray-800">${teacher.name}</td>
+                    <td class="p-2 text-center align-middle">
+                        <label class="flex justify-center items-center w-full h-full cursor-pointer p-2">
+                            <input type="radio" name="status_${teacher.id}" value="Hadir Penuh" class="w-6 h-6 text-green-600 focus:ring-green-500 border-gray-300" ${status === 'Hadir Penuh' ? 'checked' : ''}>
+                        </label>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <input type="radio" name="status_${teacher.id}" value="Hadir Sebagian" class="w-5 h-5 text-yellow-500 focus:ring-yellow-500" ${status === 'Hadir Sebagian' ? 'checked' : ''}>
+                    <td class="p-2 text-center align-middle">
+                        <label class="flex justify-center items-center w-full h-full cursor-pointer p-2">
+                            <input type="radio" name="status_${teacher.id}" value="Hadir Sebagian" class="w-6 h-6 text-yellow-500 focus:ring-yellow-500 border-gray-300" ${status === 'Hadir Sebagian' ? 'checked' : ''}>
+                        </label>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <input type="radio" name="status_${teacher.id}" value="Izin" class="w-5 h-5 text-blue-500 focus:ring-blue-500" ${status === 'Izin' ? 'checked' : ''}>
+                    <td class="p-2 text-center align-middle">
+                        <label class="flex justify-center items-center w-full h-full cursor-pointer p-2">
+                            <input type="radio" name="status_${teacher.id}" value="Izin" class="w-6 h-6 text-blue-500 focus:ring-blue-500 border-gray-300" ${status === 'Izin' ? 'checked' : ''}>
+                        </label>
                     </td>
-                    <td class="py-3 px-4 text-center">
-                        <input type="radio" name="status_${teacher.id}" value="Alpha" class="w-5 h-5 text-red-500 focus:ring-red-500" ${status === 'Alpha' ? 'checked' : ''}>
+                    <td class="p-2 text-center align-middle">
+                        <label class="flex justify-center items-center w-full h-full cursor-pointer p-2">
+                            <input type="radio" name="status_${teacher.id}" value="Alpha" class="w-6 h-6 text-red-500 focus:ring-red-500 border-gray-300" ${status === 'Alpha' ? 'checked' : ''}>
+                        </label>
                     </td>
                 </tr>`;
             });
             tbody.innerHTML = html;
+        }
+
+        // --- FUNGSI BARU: Tandai Semua Hadir Penuh ---
+        function markAllPresent() {
+            const rows = document.querySelectorAll('.teacher-row');
+            if (rows.length === 0) return;
+
+            rows.forEach(row => {
+                const id = row.getAttribute('data-id');
+                const radioHadirPenuh = row.querySelector(`input[name="status_${id}"][value="Hadir Penuh"]`);
+                if (radioHadirPenuh) {
+                    radioHadirPenuh.checked = true;
+                }
+            });
+            showToast("Semua guru ditandai Hadir Penuh", "success");
         }
 
         async function saveAttendance() {
@@ -562,21 +691,17 @@
         async function generatePDF() {
             showLoading("Mengumpulkan data untuk PDF...");
             try {
-                // Fetch ALL attendance for this event
                 const allAtt = await fetchFromGAS('getAllAttendanceForEvent', { eventId: state.currentEvent.id });
                 
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('landscape'); // Landscape better for many days
+                const doc = new jsPDF('landscape'); 
                 
-                // Add Header
                 doc.setFontSize(16);
                 doc.text(`Rekapitulasi Kehadiran: ${state.currentEvent.name}`, 14, 15);
                 doc.setFontSize(10);
                 doc.setTextColor(100);
                 doc.text(`Periode: ${formatDate(state.currentEvent.startDate)} - ${formatDate(state.currentEvent.endDate)}`, 14, 22);
 
-                // Process Data into Matrix [Teacher x Date]
-                // 1. Get Unique Dates that have attendance recorded
                 const uniqueDates = [...new Set(allAtt.map(item => item.date))].sort();
                 
                 if(uniqueDates.length === 0) {
@@ -585,16 +710,13 @@
                     return;
                 }
 
-                // 2. Prepare Columns
                 const head = [['No', 'Nama Guru', ...uniqueDates.map(d => formatDate(d).split(' ')[0] + ' ' + formatDate(d).split(' ')[1])]];
                 
-                // 3. Prepare Rows
                 const body = [];
                 state.teachers.forEach((teacher, index) => {
                     let row = [index + 1, teacher.name];
                     
                     uniqueDates.forEach(date => {
-                        // Find if this teacher has attendance on this date
                         const attRecord = allAtt.find(a => a.teacherId == teacher.id && a.date === date);
                         let statusText = '-';
                         if(attRecord) {
@@ -608,17 +730,15 @@
                     body.push(row);
                 });
 
-                // Generate Table
                 doc.autoTable({
                     head: head,
                     body: body,
                     startY: 30,
                     theme: 'grid',
-                    headStyles: { fillColor: [16, 185, 129] }, // madrasah-500 color
+                    headStyles: { fillColor: [16, 185, 129] },
                     styles: { fontSize: 8, cellPadding: 2 },
                     columnStyles: { 0: { halign: 'center', cellWidth: 10 } },
                     didDrawPage: function (data) {
-                        // Footer
                         doc.setFontSize(8);
                         doc.text(
                             `Keterangan: V = Hadir Penuh | 1/2 = Hadir Sebagian | I = Izin | X = Alpha`, 
