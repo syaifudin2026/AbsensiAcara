@@ -720,10 +720,10 @@
                         const attRecord = allAtt.find(a => a.teacherId == teacher.id && a.date === date);
                         let statusText = '-';
                         if(attRecord) {
-                            if(attRecord.status === 'Hadir Penuh') statusText = 'V';
-                            else if (attRecord.status === 'Hadir Sebagian') statusText = '1/2';
-                            else if (attRecord.status === 'Izin') statusText = 'I';
-                            else if (attRecord.status === 'Alpha') statusText = 'X';
+                            if(attRecord.status === 'Hadir Penuh') statusText = 'Hadir';
+                            else if (attRecord.status === 'Hadir Sebagian') statusText = 'Muleh Disek';
+                            else if (attRecord.status === 'Izin') statusText = 'Izin';
+                            else if (attRecord.status === 'Alpha') statusText = 'Mbolos';
                         }
                         row.push(statusText);
                     });
@@ -741,7 +741,7 @@
                     didDrawPage: function (data) {
                         doc.setFontSize(8);
                         doc.text(
-                            `Keterangan: V = Hadir Penuh | 1/2 = Hadir Sebagian | I = Izin | X = Alpha`, 
+                            `Keterangan: Hadir = Hadir Penuh | Muleh Disek = Hadir Sebagian | Izin = Izin | Mbolos = Alpha`, 
                             data.settings.margin.left, 
                             doc.internal.pageSize.height - 10
                         );
